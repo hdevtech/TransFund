@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "transfund_backend": {
+      "main": "src/transfund_backend/main.mo",
+      "type": "motoko"
+    },
+    "transfund_frontend": {
+      "dependencies": [
+        "transfund_backend"
+      ],
+      "source": [
+        "src/transfund_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "transfund_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
