@@ -20,6 +20,7 @@ const Signin1 = () => {
           <Card className="borderless text-center">
             <Card.Body>
               <div className="mb-4">
+                <h3>TransFund</h3>
                 <i className="feather icon-unlock auth-icon" />
               </div>
               <JWTLogin />

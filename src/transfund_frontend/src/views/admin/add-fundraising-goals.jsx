@@ -71,7 +71,7 @@ const AddFundraisingGoal = () => {
 
   // Function to navigate to the View Goals page
   const handleViewGoals = () => {
-    navigate('/admin/ViewGoals');
+    navigate('/admin/view-fundraising-goals');
   };
 
   return (
