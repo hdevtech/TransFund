@@ -24,9 +24,9 @@ const Signupp1  = () => {
               </div>
               <JWTSignup />
               <p className="mb-0 text-muted">
-                Don’t have an account?{' '}
-                <NavLink to="/auth/signup" className="f-w-400">
-                  Signup
+                Already with account?{' '}
+                <NavLink to="/login" className="f-w-400">
+                  Sign In
                 </NavLink>
               </p>
             </Card.Body>

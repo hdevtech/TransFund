@@ -76,7 +76,7 @@ const ReceiptPage = () => {
                 </tr>
                 <tr>
                   <th>Amount</th>
-                  <td>$${parseFloat(contribution.amount).toFixed(2)}</td>
+                  <td>${parseFloat(contribution.amount).toFixed(2)} Frw</td>
                 </tr>
                 <tr>
                   <th>Phone Number</th>
@@ -104,7 +104,7 @@ const ReceiptPage = () => {
                   </tr>
                   <tr>
                     <th>Target Amount</th>
-                    <td>$${parseFloat(goal.goal_target).toFixed(2)}</td>
+                    <td>${parseFloat(goal.goal_target).toFixed(2)} Frw</td>
                   </tr>
                 </table>
               ` : ''}
@@ -153,7 +153,7 @@ const ReceiptPage = () => {
                       </tr>
                       <tr>
                         <th>Amount</th>
-                        <td>${parseFloat(contribution.amount).toFixed(2)}</td>
+                        <td>{parseFloat(contribution.amount).toFixed(2)} Frw</td>
                       </tr>
                       <tr>
                         <th>Phone Number</th>
@@ -185,7 +185,7 @@ const ReceiptPage = () => {
                           </tr>
                           <tr>
                             <th>Target Amount</th>
-                            <td>${parseFloat(goal.goal_target).toFixed(2)}</td>
+                            <td>{parseFloat(goal.goal_target).toFixed(2)} Frw</td>
                           </tr>
                         </tbody>
                       </Table>
