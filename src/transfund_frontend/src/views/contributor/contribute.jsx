@@ -115,7 +115,7 @@ const Contribute = () => {
                 <Card.Body>
                 <h5 className="mb-3">{goal.goal_name}</h5>
                 <p>{goal.goal_desc}</p>
-                <h4 className="f-w-300 m-b-0">${parseFloat(goal.goal_target).toFixed(2)}</h4>
+                <h4 className="f-w-300 m-b-0">{parseFloat(goal.goal_target).toFixed(2)} Frw</h4>
                 </Card.Body>
                 <Card.Footer>
                 <small>Raised by: {contributor ? contributor.name : 'Unknown'}</small> {/* Show goal raiser's name */}

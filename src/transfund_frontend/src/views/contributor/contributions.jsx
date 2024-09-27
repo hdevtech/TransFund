@@ -75,7 +75,7 @@ const MyContributions = () => {
                     <tr key={contribution.contribution_id}>
                       <th scope="row">{index + 1}</th>
                       <td>{contribution.goal_name}</td> {/* Displaying goal name */}
-                      <td>${Number(contribution.amount).toLocaleString()}</td>
+                      <td>{Number(contribution.amount).toLocaleString()} Frw</td>
                       <td>{new Date(contribution.date).toLocaleDateString()}</td>
                       <td>{contribution.payment_status}</td>
                     </tr>
