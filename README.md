@@ -27,8 +27,11 @@ To run TransFund Platform locally, ensure you have the following prerequisites i
 
 - [DFINITY's dfx](https://sdk.dfinity.org/docs/quickstart/local-quickstart.html)
 - Node.js and npm
+- clone it via :
+   ```bash
+    git clone https://github.com/hdevtech/TransFund.git
 
-### Running the Platform
+### Running on the Platform
 0. Make sure you have executed 
    ```bash
    npm install
