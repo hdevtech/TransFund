@@ -4,12 +4,14 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { transfund_backend } from 'declarations/transfund_backend';
+import { AuthClient } from "@dfinity/auth-client";
 
 const JWTLogin = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
   const [isCheckingAdmin, setIsCheckingAdmin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [authClient, setAuthClient] = useState(null);
 
   const checkAndRegisterDefaultAdmin = async () => {
     try {
@@ -28,6 +30,9 @@ const JWTLogin = () => {
 
   useEffect(() => {
     checkAndRegisterDefaultAdmin();
+    AuthClient.create().then(client => {
+      setAuthClient(client);
+    });
   }, []);
 
   const handleLogin = async (values, { setSubmitting }) => {
@@ -40,11 +45,11 @@ const JWTLogin = () => {
       const isAdmin = await transfund_backend.adminLogin(username, password);
       const isContributor = await transfund_backend.contributorLogin(username, password);
 
-      if (isAdmin) {
+      if (isAdmin && isAdmin.length > 0) {
         const adminUser = { id: username, role: 'admin' };
         localStorage.setItem('user', JSON.stringify(adminUser)); // Store user in localStorage
         navigate('/admin/dashboard');
-      } else if (isContributor) {
+      } else if (isContributor && isContributor.length > 0) {
         const contributorUser = { id: username, role: 'contributor' };
         localStorage.setItem('user', JSON.stringify(contributorUser)); // Store user in localStorage
         navigate('/contributor/dashboard');
@@ -57,6 +62,40 @@ const JWTLogin = () => {
     } finally {
       setSubmitting(false);
       setLoading(false);
+    }
+  };
+
+  const signInWithInternetIdentity = async () => {
+    if (!authClient) return;
+
+    const internetIdentityUrl = import.meta.env.PROD
+      ? undefined
+      : `http://localhost:4943/?canisterId=${process.env.INTERNET_IDENTITY_CANISTER_ID}`;
+
+    await new Promise((resolve) => {
+      authClient.login({
+        identityProvider: internetIdentityUrl,
+        onSuccess: () => resolve(undefined),
+      });
+    });
+
+    const identity = authClient.getIdentity();
+    const principal = identity.getPrincipal();
+
+    // log  the principal
+    console.log(principal.toString());
+
+    // Check if the principal corresponds to a contributor
+    const contributor = await transfund_backend.getContributorByPrincipal(principal);
+
+    console.log(contributor);
+
+    if (contributor) {
+      const contributorUser = { id: principal.toString(), role: 'contributor' };
+      localStorage.setItem('user', JSON.stringify(contributorUser)); // Store user in localStorage
+      navigate('/contributor/dashboard');
+    } else {
+      setErrorMessage('You are not a registered contributor.');
     }
   };
 
@@ -119,6 +158,18 @@ const JWTLogin = () => {
                     type="submit"
                   >
                     {isSubmitting || loading ? 'Logging in...' : 'Sign In'}
+                  </Button>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Button
+                    className="btn-block mb-4"
+                    variant="secondary"
+                    onClick={signInWithInternetIdentity}
+                    disabled={loading}
+                  >
+                    {loading ? 'Logging in...' : 'Sign in with Internet Identity'}
                   </Button>
                 </Col>
               </Row>
