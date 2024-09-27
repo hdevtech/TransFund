@@ -37,12 +37,14 @@ actor {
     date: Text;
   };
 
+  // Updated Contribution type to include phone_number
   public type Contribution = {
     contribution_id: Nat;
     contributor_id: Nat;
     goal_id: Nat;
     amount: Nat;
     date: Text;
+    phone_number: Text; // Added phone number
     tx_id: Text;
     tx_ref: Text;
     payment_status: Text;
@@ -146,6 +148,7 @@ actor {
     goals := Array.append(goals, [newGoal]);
   };
 
+
   public query func getGoals() : async [ContributionGoal] {
     return goals;
   };
@@ -210,13 +213,16 @@ actor {
 
   // ---------------------- Contribution Functions ----------------------
 
-  public func addContribution(contribution_id: Nat, contributor_id: Nat, goal_id: Nat, amount: Nat, date: Text, tx_id: Text, tx_ref: Text, payment_status: Text) : async () {
+  // Updated function to include phone_number in contribution
+  public func addContribution(contribution_id: Nat, contributor_id: Nat, phone_number: Text , goal_id: Nat, amount: Nat, date: Text, tx_id: Text, tx_ref: Text, payment_status: Text) : async () {
+
     let newContribution : Contribution = {
       contribution_id;
       contributor_id;
       goal_id;
       amount;
       date;
+      phone_number; // Include the phone number of the contributor
       tx_id;
       tx_ref;
       payment_status;
@@ -239,5 +245,37 @@ actor {
   public query func getAllContributions() : async [Contribution] {
     return contributions;
   };
-  
+  // Function to update contribution by transaction ID and change payment status
+  public func updateContributionStatus(newtx_ref: Text, newtx_id: Text ,new_status: Text) : async Bool {
+      let updatedContributions = Array.filter<Contribution>(contributions, func(c) {
+        c.tx_ref == newtx_ref
+      });
+
+      if (Array.size(updatedContributions) == 0) {
+        return false; // Contribution with this transaction ID not found
+      };
+
+      let updatedContribution = updatedContributions[0];
+      let newContribution = {
+        contribution_id = updatedContribution.contribution_id;
+        contributor_id = updatedContribution.contributor_id;
+        goal_id = updatedContribution.goal_id;
+        amount = updatedContribution.amount;
+        date = updatedContribution.date;
+        phone_number = updatedContribution.phone_number;
+        tx_id = newtx_id; // Keep the same transaction ID
+        tx_ref = updatedContribution.tx_ref; // Keep the same transaction reference
+        payment_status = new_status; // Update payment status
+      };
+
+      // Remove the old contribution
+      contributions := Array.filter<Contribution>(contributions, func(c) {
+        c.tx_ref != newtx_ref
+      });
+
+      // Add the updated contribution
+      contributions := Array.append(contributions, [newContribution]);
+      return true;
+  };
+
 };

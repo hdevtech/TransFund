@@ -16,6 +16,7 @@
     "src/transfund_frontend"
   ],
   "dependencies": {
-    "@dfinity/auth-client": "^2.1.1"
+    "@dfinity/auth-client": "^2.1.1",
+    "axios": "^1.7.7"
   }
 }

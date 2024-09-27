@@ -46,11 +46,15 @@ const JWTLogin = () => {
       const isContributor = await transfund_backend.contributorLogin(username, password);
 
       if (isAdmin && isAdmin.length > 0) {
-        const adminUser = { id: username, role: 'admin' };
+        // const adminUser = { id: username, role: 'admin' };
+        // set proper id 
+        const adminUser = { id: isAdmin[0].id, role: 'admin' };
         localStorage.setItem('user', JSON.stringify(adminUser)); // Store user in localStorage
         navigate('/admin/dashboard');
       } else if (isContributor && isContributor.length > 0) {
-        const contributorUser = { id: username, role: 'contributor' };
+        // const contributorUser = { id: username, role: 'contributor' };
+        // set proper id
+        const contributorUser = { id: isContributor[0].id.toString(), role: 'contributor' };
         localStorage.setItem('user', JSON.stringify(contributorUser)); // Store user in localStorage
         navigate('/contributor/dashboard');
       } else {

@@ -75,6 +75,14 @@ const originalMenuItems = {
           url: '/contributor/view-fundraising-goals',
           roles: ['contributor'], // Only admin can access
         },
+        {
+          id: 'view-fundraising-goals',
+          title: 'My Contributions',
+          type: 'item',
+          icon: 'feather icon-home',
+          url: '/contributor/mycontributions',
+          roles: ['contributor'], // Only admin can access
+        },
       ]
     },
   ]

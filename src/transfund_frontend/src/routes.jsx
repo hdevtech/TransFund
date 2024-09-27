@@ -105,6 +105,22 @@ const routes = [
 
         roles: ['admin'], // Only admins  can access
       },
+      {
+        exact: 'true',
+        path: 'admin/goal-contributions/:goal_id',
+
+        element: lazy(() => import('./views/admin/contributions')),
+
+        roles: ['admin'], // Only admins  can access
+      },
+      {
+        exact: 'true',
+        path: 'contributor/mycontributions',
+
+        element: lazy(() => import('./views/contributor/contributions')),
+
+        roles: ['contributor'], // Only admins  can access
+      },
 
 
       {
@@ -128,6 +144,18 @@ const routes = [
         path: '/contribute/:goal_id',
         element: lazy(() => import('./views/contributor/contribute')), // Point to your Contribute component
         roles: ['contributor'], // Only contributors can access
+      },
+      {
+        exact: 'true',
+        path: '/waiting/:tx_ref',
+        element: lazy(() => import('./views/contributor/waiting')), // Point to your Contribute component
+        roles: ['contributor'], // Only contributors can access
+      },
+      {
+        exact: 'true',
+        path: '/receipt/:tx_ref/view',
+        element: lazy(() => import('./views/contributor/ReceiptPage')), // Point to your Contribute component
+        roles: ['contributor','admin'], // Only contributors can access
       },
 
 
