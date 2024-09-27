@@ -44,7 +44,12 @@ To run TransFund Platform locally, ensure you have the following prerequisites i
    ```bash
    dfx deploy
 3. Open the deployed application in your browser..
+4. For credentials
+a. **For Admin || s**  
+   See on the login page
 
+2. **For Contributor || s**  
+    Simply Sign Up and Enjoy it
 ### Running the Platform
 
 For any issues or feedback, please contact the development team at the provided email addresses.
