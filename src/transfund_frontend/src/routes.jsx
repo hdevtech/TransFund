@@ -59,8 +59,8 @@ const routes = [
   },
   {
     exact: 'true',
-    path: '/auth/signup-1',
-    element: lazy(() => import('./views/auth/signup/SignUp1'))
+    path: '/auth/signup',
+    element: lazy(() => import('./views/auth/signup/sign'))
   },
   {
     path: '*',
@@ -107,7 +107,7 @@ const routes = [
       },
       {
         exact: 'true',
-        path: 'admin/goal-contributions/:goal_id',
+        path: '/admin/goal-contributions/:goal_id',
 
         element: lazy(() => import('./views/admin/contributions')),
 
@@ -115,7 +115,7 @@ const routes = [
       },
       {
         exact: 'true',
-        path: 'contributor/mycontributions',
+        path: '/contributor/mycontributions',
 
         element: lazy(() => import('./views/contributor/contributions')),
 

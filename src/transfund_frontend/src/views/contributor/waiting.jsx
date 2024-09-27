@@ -105,7 +105,7 @@ const WaitingPage = () => {
                   {status === 'failed' && (
                     <Alert variant="danger">
                       Payment failed. 
-                      <Button onClick={() => navigate('/contribute')} className="ml-2">Try Again</Button>
+                      <Button onClick={() => navigate('/contributor/view-fundraising-goals')} className="ml-2">Try Again</Button>
                     </Alert>
                   )}
                 </Card.Body>

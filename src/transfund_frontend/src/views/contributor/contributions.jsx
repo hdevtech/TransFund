@@ -6,26 +6,34 @@ const MyContributions = () => {
   const [contributions, setContributions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
-  const [loggedInUser, setLoggedInUser] = useState([]);
 
   useEffect(() => {
-    const fetchContributions = async () => {
+    const fetchContributionsWithGoals = async () => {
       try {
-        
         const storedUser = localStorage.getItem('user');
         const my_user = JSON.parse(storedUser);
-        
-        if (storedUser) {
-            console.log('Logged-in user:', loggedInUser);
-            // Fetch contributions for the logged-in contributor
-            const contributionsList = await transfund_backend.getContributionsByContributor(Number(storedUser.id));
-            setContributions(contributionsList);
-            
-        } else {
-            setErrorMessage('No logged-in user found. Please log in.');
-            setLoading(false);
-            return;
+
+        if (!my_user) {
+          setErrorMessage('No logged-in user found. Please log in.');
+          setLoading(false);
+          return;
         }
+
+        // Fetch contributions for the logged-in contributor
+        const contributionsList = await transfund_backend.getContributionsByContributor(Number(my_user.id));
+
+        // Fetch the goal details for each contribution
+        const contributionsWithGoals = await Promise.all(
+          contributionsList.map(async (contribution) => {
+            const goalDetails = await transfund_backend.getGoalDetails(Number(contribution.goal_id));
+            return {
+              ...contribution,
+              goal_name: goalDetails ? goalDetails[0].goal_id+' - '+goalDetails[0].goal_name : 'Unknown Goal', // Fallback in case goal is not found
+            };
+          })
+        );
+
+        setContributions(contributionsWithGoals);
       } catch (error) {
         console.error('Failed to fetch contributions:', error);
         setErrorMessage('Could not fetch contributions. Please try again later.');
@@ -34,7 +42,7 @@ const MyContributions = () => {
       }
     };
 
-    fetchContributions();
+    fetchContributionsWithGoals();
   }, []);
 
   return (
@@ -66,7 +74,7 @@ const MyContributions = () => {
                   contributions.map((contribution, index) => (
                     <tr key={contribution.contribution_id}>
                       <th scope="row">{index + 1}</th>
-                      <td>{contribution.goal_name}</td> {/* Assuming you have goal_name in contribution object */}
+                      <td>{contribution.goal_name}</td> {/* Displaying goal name */}
                       <td>${Number(contribution.amount).toLocaleString()}</td>
                       <td>{new Date(contribution.date).toLocaleDateString()}</td>
                       <td>{contribution.payment_status}</td>

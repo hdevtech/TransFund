@@ -48,15 +48,17 @@ const JWTLogin = () => {
       if (isAdmin && isAdmin.length > 0) {
         // const adminUser = { id: username, role: 'admin' };
         // set proper id 
-        const adminUser = { id: isAdmin[0].id, role: 'admin' };
+        const adminUser = { id: parseInt(isAdmin[0].id), role: 'admin' };
         localStorage.setItem('user', JSON.stringify(adminUser)); // Store user in localStorage
-        navigate('/admin/dashboard');
+        // navigate('/admin/dashboard');
+        window.location.href = `${window.location.origin}/admin/dashboard`;
       } else if (isContributor && isContributor.length > 0) {
         // const contributorUser = { id: username, role: 'contributor' };
         // set proper id
         const contributorUser = { id: isContributor[0].id.toString(), role: 'contributor' };
         localStorage.setItem('user', JSON.stringify(contributorUser)); // Store user in localStorage
-        navigate('/contributor/dashboard');
+        // navigate('/contributor/dashboard');
+        window.location.href = `${window.location.origin}/contributor/dashboard`;
       } else {
         setErrorMessage('Invalid credentials. Please try again.');
       }
@@ -95,9 +97,12 @@ const JWTLogin = () => {
     console.log(contributor);
 
     if (contributor) {
-      const contributorUser = { id: principal.toString(), role: 'contributor' };
+      const contributorUser = { id: contributor[0].id.toString(), role: 'contributor' };
       localStorage.setItem('user', JSON.stringify(contributorUser)); // Store user in localStorage
-      navigate('/contributor/dashboard');
+      // navigate('/contributor/dashboard');
+      // use window.location.href 
+      //make sure uurls is built from host 
+      window.location.href = `${window.location.origin}/contributor/dashboard`;
     } else {
       setErrorMessage('You are not a registered contributor.');
     }

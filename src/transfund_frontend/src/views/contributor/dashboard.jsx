@@ -1,94 +1,131 @@
-import React from 'react';
-import { Row, Col, Card, Table, Tabs, Tab } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Card, Table, Alert, Spinner, Button } from 'react-bootstrap';
+import { transfund_backend } from 'declarations/transfund_backend';
+import { Link } from 'react-router-dom'; // Import Link for navigation
 
-import avatar1 from '../../assets/images/user/avatar-1.jpg';
-import avatar2 from '../../assets/images/user/avatar-2.jpg';
-import avatar3 from '../../assets/images/user/avatar-3.jpg';
+const MyContributions = () => {
+  const [contributions, setContributions] = useState([]);
+  const [contributorInfo, setContributorInfo] = useState(null); // State to hold contributor info
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
-const dashSalesData = [
-  { title: 'Contributors', amount: '10', icon: 'icon-arrow-up text-c-green', value: 50, class: 'progress-c-theme' },
-  { title: 'Goals', amount: '3', icon: 'icon-arrow-down text-c-red', value: 36, class: 'progress-c-theme2' },
-  { title: 'Fundraisings', amount: '$8,638.32', icon: 'icon-arrow-up text-c-green', value: 70, color: 'progress-c-theme' }
-];
+  useEffect(() => {
+    const fetchContributionsWithGoals = async () => {
+      try {
+        const storedUser = localStorage.getItem('user');
+        const my_user = JSON.parse(storedUser);
 
-const DashDefault = () => {
+        if (!my_user) {
+          setErrorMessage('No logged-in user found. Please log in.');
+          setLoading(false);
+          return;
+        }
+
+        // Fetch contributor info for the logged-in user
+        const contributorData = await transfund_backend.getContributorById(Number(my_user.id));
+        if (contributorData) {
+          setContributorInfo(contributorData[0]); // Set the contributor information
+        }
+
+        // Fetch contributions for the logged-in contributor
+        const contributionsList = await transfund_backend.getContributionsByContributor(Number(my_user.id));
+
+        // Fetch the goal details for each contribution
+        const contributionsWithGoals = await Promise.all(
+          contributionsList.map(async (contribution) => {
+            const goalDetails = await transfund_backend.getGoalDetails(Number(contribution.goal_id));
+            return {
+              ...contribution,
+              goal_name: goalDetails ? `${goalDetails[0].goal_id} - ${goalDetails[0].goal_name}` : 'Unknown Goal', // Fallback in case goal is not found
+            };
+          })
+        );
+
+        setContributions(contributionsWithGoals);
+      } catch (error) {
+        console.error('Failed to fetch contributions:', error);
+        setErrorMessage('Could not fetch contributions. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContributionsWithGoals();
+  }, []);
+
   return (
-    <React.Fragment>
-      {/* add that contributor is triggered */}
-      <Row>
-        <Col>
+    <div>
+      {loading ? (
+        <div className="text-center">
+          <Spinner animation="border" variant="primary" />
+        </div>
+      ) : errorMessage ? (
+        <Alert variant="danger" className="text-center">{errorMessage}</Alert>
+      ) : (
+        <div>
+          {contributorInfo && (
+            <Card className="mb-4">
+              <Card.Header>
+                <Card.Title as="h5">Logged in Contributor Info</Card.Title>
+              </Card.Header>
+              <Card.Body>
+                <p><strong>Name:</strong> {contributorInfo.name}</p>
+                <p><strong>Username:</strong> {contributorInfo.username}</p>
+                <p><strong>Phone Number:</strong> {contributorInfo.phone_number}</p>
+              </Card.Body>
+            </Card>
+          )}
+
           <Card>
             <Card.Header>
-              <Card.Title as="h5">Contributors Table</Card.Title>
-              <span className="d-block m-t-5">
-                List of all contributors who can participate in Fundraising.
-              </span>
+              <Card.Title as="h5">Recent Contributions</Card.Title>
             </Card.Header>
             <Card.Body>
               <Table responsive hover striped>
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Name</th>
-                    <th>Username</th>
-                    <th>Phone Number</th>
+                    <th>Goal Name</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Payment Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>John Doe</td>
-                    <td>john_doe</td>
-                    <td>08012345678</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Jane Doe</td>
-                    <td>jane_doe</td>
-                    <td>08087654321</td>
-                  </tr>
+                  {contributions.length > 0 ? (
+                    contributions
+                      .slice(-3) // Get the last 3 contributions
+                      .map((contribution, index) => (
+                        <tr key={contribution.contribution_id}>
+                          <th scope="row">{index + 1}</th>
+                          <td>{contribution.goal_name}</td> {/* Displaying goal name */}
+                          <td>${Number(contribution.amount).toLocaleString()}</td>
+                          <td>{new Date(contribution.date).toLocaleDateString()}</td>
+                          <td>{contribution.payment_status}</td>
+                        </tr>
+                      ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" className="text-center">
+                        No contributions found.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </Table>
+
+              {/* "View More" Button */}
+              <div className="text-center">
+                <Link to="/contributor/mycontributions">
+                  <Button variant="primary">View More</Button>
+                </Link>
+              </div>
             </Card.Body>
           </Card>
-        </Col>
-      </Row>
-      <Row>
-        {dashSalesData.map((data, index) => {
-          return (
-            <Col key={index} xl={6} xxl={4}>
-              <Card>
-                <Card.Body>
-                  <h6 className="mb-4">{data.title}</h6>
-                  <div className="row d-flex align-items-center">
-                    <div className="col-9">
-                      <h3 className="f-w-300 d-flex align-items-center m-b-0">
-                        <i className={`feather ${data.icon} f-30 m-r-5`} /> {data.amount}
-                      </h3>
-                    </div>
-                    <div className="col-3 text-end">
-                      <p className="m-b-0">{data.value}%</p>
-                    </div>
-                  </div>
-                  <div className="progress m-t-30" style={{ height: '7px' }}>
-                    <div
-                      className={`progress-bar ${data.class}`}
-                      role="progressbar"
-                      style={{ width: `${data.value}%` }}
-                      aria-valuenow={data.value}
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                    />
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          );
-        })}
-      </Row>
-    </React.Fragment>
+        </div>
+      )}
+    </div>
   );
 };
 
-export default DashDefault;
+export default MyContributions;

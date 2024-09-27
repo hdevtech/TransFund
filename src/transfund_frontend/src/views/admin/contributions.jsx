@@ -85,7 +85,7 @@ const GoalContributions = () => {
                   <tr key={contribution.contribution_id}>
                     <th scope="row">{index + 1}</th>
                     <td>{contributorsMap[contribution.contributor_id] || 'Unknown'}</td>
-                    <td>{contribution.contributor_id}</td>
+                    <td>{Number(contribution.contributor_id).toLocaleString()}</td>
                     <td>{Number(contribution.amount).toLocaleString()}</td> {/* Format for better readability */}
                     <td>{contribution.date}</td>
                     <td>{contribution.payment_status}</td>

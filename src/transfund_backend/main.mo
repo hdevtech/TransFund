@@ -72,6 +72,12 @@ actor {
     return admins;
   };
 
+// get admin by  id
+  public query func getAdminById(admin_id: Nat) : async ?Admin {
+    return Array.find<Admin>(admins, func(a) {
+      a.admin_id == admin_id
+    });
+  };
   // ---------------------- Contributor Functions ----------------------
 
   public func addContributor(id: Nat, name: Text, username: Text, password: Text, phone_number: Text) : async () {
@@ -100,8 +106,28 @@ actor {
     });
   };
 
+  // get contributor by id
+  public query func getContributorById(contributor_id: Nat) : async ?Contributor {
+    return Array.find<Contributor>(contributors, func(c) {
+      c.id == contributor_id
+    });
+  };
+
   public query func getContributors() : async [Contributor] {
     return contributors;
+  };
+  // add contributor with also principal
+
+  public func addContributorWithPrincipal(id: Nat, name: Text, username: Text, password: Text, phone_number: Text, principal: Principal) : async () {
+    let newContributor : Contributor = {
+      id;
+      name;
+      username;
+      password;
+      phone_number;
+      principal = ?principal; // Set the principal
+    };
+    contributors := Array.append(contributors, [newContributor]);
   };
 
   // Set contributor's principal
@@ -277,5 +303,11 @@ actor {
       contributions := Array.append(contributions, [newContribution]);
       return true;
   };
-
+// empty the all data
+  public func emptyData() : async () {
+    admins := [];
+    contributors := [];
+    goals := [];
+    contributions := [];
+  };
 };
